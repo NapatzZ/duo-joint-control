@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  duo-joint-ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: duo-joint-humble
+    environment:
+      - ROS_DOMAIN_ID=0
+      - ROS_LOCALHOST_ONLY=0
+    volumes:
+      # Mount workspace for code changes
+      - .:/ws
+      # Mount home directory for configs
+      - /root/.ros:/root/.ros
+    stdin_open: true
+    tty: true
+    # Network host for ROS 2 communication
+    network_mode: host
+    # USB device passthrough for motors (uncomment if connecting real hardware)
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    #   - /dev/cu.usbserial-123456789:/dev/ttyUSB0  # macOS serial port
+    command: bash
