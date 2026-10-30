@@ -1,0 +1,38 @@
+[workspace]
+name = "duo-joint-control"
+version = "0.1.0"
+description = "Dual Motor Joint Control - ROS 2 Humble POC (macOS compatible testing)"
+authors = ["SKUBA R&D Team <napat559977@gmail.com>"]
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+python = "3.10.*"
+pip = "*"
+pyyaml = "*"
+numpy = "*"
+
+[pypi-dependencies]
+# Note: ROS 2 packages require ROS 2 environment
+# These are listed for reference but will be installed via rosdep
+pydantic = ">=2.0"
+pyyaml = "*"
+
+[tasks]
+# Test dual motor synchronization (mock hardware)
+test-sync = "python3 duo_joint/scripts/test_dual_motor_sync.py"
+
+# Monitor dual motors in real-time
+monitor = "python3 duo_joint/scripts/monitor_dual_motors.py"
+
+# Build ROS 2 package (requires ROS 2 Humble installed)
+build = "colcon build --packages-select duo_joint"
+
+# Launch controller (requires ROS 2 Humble installed)
+launch = "ros2 launch duo_joint dual_motor_control.launch.py use_mock_hardware:=true"
+
+# Run complete test sequence
+test-all = "python3 duo_joint/scripts/test_dual_motor_sync.py && echo 'Test completed!'"
+
+# Format and lint Python files
+lint = "python3 -m py_compile duo_joint/scripts/*.py"
