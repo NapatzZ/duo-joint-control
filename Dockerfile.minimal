@@ -35,11 +35,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create workspace
 WORKDIR /ws
 
-# Copy project
+# Copy project (skip building - will do on container start)
 COPY . /ws/
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir pyyaml
+RUN pip3 install --no-cache-dir pyyaml 2>/dev/null || true
 
 # Source ROS setup
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc

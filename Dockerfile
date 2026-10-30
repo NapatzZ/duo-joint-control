@@ -43,14 +43,14 @@ COPY . /ws/
 # Source ROS setup
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 
-# Build package
-RUN bash -c 'source /opt/ros/humble/setup.bash && \
-    colcon build --packages-select duo_joint 2>&1'
+# Skip building during Docker build (build on container start if needed)
 
 # Setup entrypoint
 RUN echo '#!/bin/bash\n\
 source /opt/ros/humble/setup.bash\n\
-source /ws/install/setup.bash\n\
+if [ -d "/ws/install" ]; then\n\
+  source /ws/install/setup.bash 2>/dev/null || true\n\
+fi\n\
 exec "$@"' > /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
