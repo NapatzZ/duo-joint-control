@@ -1,0 +1,55 @@
+FROM ubuntu:22.04
+
+# Set environment
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Install basic dependencies and ROS 2 minimal
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg2 \
+    lsb-release \
+    ubuntu-keyring \
+    build-essential \
+    cmake \
+    git \
+    python3-pip \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add ROS 2 GPG key and repository
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Install ROS 2 Humble (minimal set)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ros-core \
+    ros-humble-controller-manager \
+    ros-humble-joint-trajectory-controller \
+    ros-humble-robot-state-publisher \
+    python3-rosdep \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create workspace
+WORKDIR /ws
+
+# Copy project
+COPY . /ws/
+
+# Install Python dependencies
+RUN pip3 install --no-cache-dir pyyaml
+
+# Source ROS setup
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+
+# Setup entrypoint
+RUN echo '#!/bin/bash\n\
+source /opt/ros/humble/setup.bash\n\
+source /ws/install/setup.bash 2>/dev/null || true\n\
+exec "$@"' > /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/bin/bash"]
