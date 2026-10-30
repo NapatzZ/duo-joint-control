@@ -30,8 +30,8 @@ echo "🚀 Starting ROS 2 controller with real motors..."
 echo "────────────────────────────────────────────────────────"
 echo ""
 
-# Run Docker with serial port
-docker run -it --rm \
+# Run Docker with serial port (no -it to avoid TTY issues)
+docker run -i --rm \
     --device=$SERIAL_PORT:/dev/ttyUSB0 \
     $DOCKER_IMAGE bash << 'DOCKER_BASH'
 

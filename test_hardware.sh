@@ -61,11 +61,6 @@ check_prerequisites() {
     print_success "Serial port detected: $SERIAL_PORT"
 }
 
-# Build Docker command
-build_docker_cmd() {
-    echo "docker run -it --rm --name $CONTAINER_NAME --device=$SERIAL_PORT:/dev/ttyUSB0 $DOCKER_IMAGE"
-}
-
 # Show menu
 show_menu() {
     print_header "Dual Motor Hardware Test Menu"
@@ -99,9 +94,8 @@ main() {
                 print_header "Testing with REAL Hardware"
                 echo ""
 
-                docker_cmd=$(build_docker_cmd)
-
-                eval "$docker_cmd" << 'DOCKER_BASH'
+                # Run Docker without -it (causes TTY issues)
+                docker run -i --rm --device=$SERIAL_PORT:/dev/ttyUSB0 $DOCKER_IMAGE bash << 'EOF'
 source /opt/ros/humble/setup.bash
 source install/setup.bash 2>/dev/null || true
 
@@ -110,8 +104,7 @@ echo "🚀 Launching ROS 2 Controller with REAL motors..."
 echo ""
 
 ros2 launch duo_joint dual_motor_control.launch.py use_mock_hardware=false
-
-DOCKER_BASH
+EOF
 
                 echo ""
                 ;;
@@ -120,9 +113,8 @@ DOCKER_BASH
                 print_header "Testing with MOCK Hardware"
                 echo ""
 
-                docker_cmd="docker run -it --rm --name $CONTAINER_NAME $DOCKER_IMAGE"
-
-                eval "$docker_cmd" << 'DOCKER_BASH'
+                # Run Docker without -it (causes TTY issues)
+                docker run -i --rm $DOCKER_IMAGE bash << 'EOF'
 source /opt/ros/humble/setup.bash
 source install/setup.bash 2>/dev/null || true
 
@@ -131,8 +123,7 @@ echo "🚀 Launching ROS 2 Controller with MOCK motors..."
 echo ""
 
 ros2 launch duo_joint dual_motor_control.launch.py use_mock_hardware=true
-
-DOCKER_BASH
+EOF
 
                 echo ""
                 ;;
