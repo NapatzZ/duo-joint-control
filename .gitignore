@@ -1,0 +1,35 @@
+# ROS 2 / Build
+build/
+install/
+log/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Bag files
+*.bag
+*.sqlite3
+
+# ROS2
+.ros

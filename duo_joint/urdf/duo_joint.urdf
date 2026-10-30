@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="duo_joint">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0515 0.035275 -0.019941"
+        rpy="0 0 0" />
+      <mass
+        value="0.6" />
+      <inertia
+        ixx="6.7077E-05"
+        ixy="3.1649E-21"
+        ixz="-4.6137E-09"
+        iyy="5.9663E-05"
+        iyz="-6.0754E-22"
+        izz="9.448E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Lpin_Link">
+    <inertial>
+      <origin
+        xyz="0.0097536 -0.008551 8.5823E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.02" />
+      <inertia
+        ixx="6.2061E-08"
+        ixy="-2.1269E-08"
+        ixz="2.0011E-11"
+        iyy="4.8413E-07"
+        iyz="5.8259E-15"
+        izz="4.3061E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/Lpin_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/Lpin_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Lpin_joint"
+    type="revolute">
+    <origin
+      xyz="0.0526 0.019825 0.0536"
+      rpy="1.5708 -1.5708 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Lpin_Link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Rpin_Link">
+    <inertial>
+      <origin
+        xyz="0.0097536 0.001449 8.5823E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.02" />
+      <inertia
+        ixx="6.2061E-08"
+        ixy="-2.1269E-08"
+        ixz="2.0011E-11"
+        iyy="4.8413E-07"
+        iyz="5.8259E-15"
+        izz="4.3061E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/Rpin_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://duo_joint/meshes/Rpin_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Rpin_joint"
+    type="revolute">
+    <origin
+      xyz="0.0404 0.020025 0.0536"
+      rpy="0 -1.5634 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="Rpin_Link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+  <!-- ROS 2 Control Configuration - DUAL MOTOR SYNCHRONIZED (Option B) -->
+  <ros2_control name="DuoJointHardware" type="system">
+    <hardware>
+      <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+      <param name="number_of_joints">1</param>
+      <param name="number_of_transmissions">2</param>
+      <param name="port_name">/dev/ttyUSB0</param>
+      <param name="baud_rate">1000000</param>
+      <!-- Transmission Matrix: 1 joint × 2 motors (both motors drive same joint) -->
+      <param name="transmission_to_joint_matrix">
+        1, 1
+      </param>
+      <!-- Joint to Transmission Matrix: reciprocal -->
+      <param name="joint_to_transmission_matrix">
+        1, 1
+      </param>
+    </hardware>
+
+    <!-- Motor 22: Dual Joint Drive - Motor A (Left Pin) -->
+    <gpio name="motor_dual_a">
+      <param name="ID">22</param>
+      <param name="type">dxl</param>
+      <param name="Operating Mode">3</param>
+      <param name="Torque Enable">1</param>
+      <command_interface name="Goal Position"/>
+      <state_interface name="Present Position"/>
+      <state_interface name="Present Velocity"/>
+      <state_interface name="Present Current"/>
+    </gpio>
+
+    <!-- Motor 21: Dual Joint Drive - Motor B (Right Pin) -->
+    <gpio name="motor_dual_b">
+      <param name="ID">21</param>
+      <param name="type">dxl</param>
+      <param name="Operating Mode">3</param>
+      <param name="Torque Enable">1</param>
+      <command_interface name="Goal Position"/>
+      <state_interface name="Present Position"/>
+      <state_interface name="Present Velocity"/>
+      <state_interface name="Present Current"/>
+    </gpio>
+
+    <!-- Single Joint controlled by both motors -->
+    <joint name="dual_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+</robot>
