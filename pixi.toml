@@ -21,6 +21,7 @@ pyyaml = "*"
 [tasks]
 # ✅ macOS STANDALONE - No ROS 2 required
 standalone-test = "python3 duo_joint/scripts/standalone_test.py"
+standalone-test-visual = "python3 duo_joint/scripts/standalone_test_visual.py"
 standalone-interactive = "python3 duo_joint/scripts/standalone_test.py --interactive"
 
 # ⚠️ REQUIRES ROS 2 - Linux/Docker only
