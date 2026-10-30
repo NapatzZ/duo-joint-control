@@ -19,20 +19,20 @@ pydantic = ">=2.0"
 pyyaml = "*"
 
 [tasks]
-# Test dual motor synchronization (mock hardware)
-test-sync = "python3 duo_joint/scripts/test_dual_motor_sync.py"
+# ✅ macOS STANDALONE - No ROS 2 required
+standalone-test = "python3 duo_joint/scripts/standalone_test.py"
+standalone-interactive = "python3 duo_joint/scripts/standalone_test.py --interactive"
 
-# Monitor dual motors in real-time
+# ⚠️ REQUIRES ROS 2 - Linux/Docker only
+test-sync = "python3 duo_joint/scripts/test_dual_motor_sync.py"
 monitor = "python3 duo_joint/scripts/monitor_dual_motors.py"
 
-# Build ROS 2 package (requires ROS 2 Humble installed)
+# 🐳 REQUIRES ROS 2 Humble & colcon
 build = "colcon build --packages-select duo_joint"
-
-# Launch controller (requires ROS 2 Humble installed)
 launch = "ros2 launch duo_joint dual_motor_control.launch.py use_mock_hardware:=true"
 
-# Run complete test sequence
+# Combined tests
 test-all = "python3 duo_joint/scripts/test_dual_motor_sync.py && echo 'Test completed!'"
 
-# Format and lint Python files
+# Code quality
 lint = "python3 -m py_compile duo_joint/scripts/*.py"
