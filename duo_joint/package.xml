@@ -4,44 +4,24 @@
   <version>0.1.0</version>
   <description>
     Dual Motor Synchronized Joint - POC (ROS 2 Humble)
-
-    URDF and control configuration for synchronized dual Dynamixel motors
-    (MX106 IDs 22 & 21) on a single joint.
+    URDF and control configuration for synchronized dual Dynamixel motors.
   </description>
   <author email="napat559977@gmail.com">SKUBA R&D Team</author>
   <maintainer email="napat559977@gmail.com">SKUBA R&D Team</maintainer>
   <license>BSD-3-Clause</license>
 
-  <!-- ROS 2 Build System -->
+  <!-- Build System -->
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <!-- Runtime Dependencies (ROS 2 Humble) -->
+  <!-- Core Dependencies -->
   <depend>robot_state_publisher</depend>
-  <depend>joint_state_publisher</depend>
-  <depend>joint_state_publisher_gui</depend>
   <depend>controller_manager</depend>
   <depend>joint_trajectory_controller</depend>
-  <depend>dynamixel_hardware_interface</depend>
-  <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>trajectory_msgs</depend>
-  <depend>builtin_interfaces</depend>
-
-  <!-- Gazebo Integration (Optional) -->
-  <depend>gazebo_ros</depend>
-  <depend>gazebo_ros_pkgs</depend>
-
-  <!-- Visualization -->
-  <depend>rviz2</depend>
-  <depend>rviz_common</depend>
-
-  <!-- Testing -->
-  <test_depend>ament_cmake_python</test_depend>
-  <test_depend>ament_cmake_gtest</test_depend>
 
   <!-- Export -->
   <export>
     <build_type>ament_cmake</build_type>
-    <architecture_independent/>
   </export>
 </package>
