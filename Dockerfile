@@ -31,6 +31,12 @@ RUN apt-get update && apt-get install -y \
     ros-humble-controller-manager \
     ros-humble-joint-trajectory-controller \
     ros-humble-robot-state-publisher \
+    ros-humble-dynamixel-sdk \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-ros2controlcli \
+    ros-humble-realtime-tools \
+    ros-humble-joint-state-broadcaster \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 

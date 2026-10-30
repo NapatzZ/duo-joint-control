@@ -161,7 +161,6 @@
       velocity="0" />
   </joint>
 
-  <!-- ROS 2 Control Configuration - DUAL MOTOR SYNCHRONIZED (Option B) -->
   <ros2_control name="DuoJointHardware" type="system">
     <hardware>
       <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
@@ -169,41 +168,36 @@
       <param name="number_of_transmissions">2</param>
       <param name="port_name">/dev/ttyUSB0</param>
       <param name="baud_rate">1000000</param>
-      <!-- Transmission Matrix: 1 joint × 2 motors (both motors drive same joint) -->
-      <param name="transmission_to_joint_matrix">
-        1, 1
-      </param>
-      <!-- Joint to Transmission Matrix: reciprocal -->
-      <param name="joint_to_transmission_matrix">
-        1, 1
-      </param>
+      <param name="dynamixel_model_folder">/param/dxl_model</param>
+      <param name="disable_torque_at_init">true</param>
+      <!-- joints x transmissions: joint position = average of both motors -->
+      <param name="transmission_to_joint_matrix">0.5, 0.5</param>
+      <!-- transmissions x joints: both motors receive the joint command (use -1 for a mirrored motor) -->
+      <param name="joint_to_transmission_matrix">1, 1</param>
     </hardware>
 
-    <!-- Motor 22: Dual Joint Drive - Motor A (Left Pin) -->
     <gpio name="motor_dual_a">
+      <param name="type">dxl</param>
       <param name="ID">22</param>
-      <param name="type">dxl</param>
       <param name="Operating Mode">3</param>
-      <param name="Torque Enable">1</param>
+      <param name="Torque Enable">0</param>
       <command_interface name="Goal Position"/>
       <state_interface name="Present Position"/>
       <state_interface name="Present Velocity"/>
       <state_interface name="Present Current"/>
     </gpio>
 
-    <!-- Motor 21: Dual Joint Drive - Motor B (Right Pin) -->
     <gpio name="motor_dual_b">
-      <param name="ID">21</param>
       <param name="type">dxl</param>
+      <param name="ID">21</param>
       <param name="Operating Mode">3</param>
-      <param name="Torque Enable">1</param>
+      <param name="Torque Enable">0</param>
       <command_interface name="Goal Position"/>
       <state_interface name="Present Position"/>
       <state_interface name="Present Velocity"/>
       <state_interface name="Present Current"/>
     </gpio>
 
-    <!-- Single Joint controlled by both motors -->
     <joint name="dual_joint">
       <command_interface name="position"/>
       <state_interface name="position"/>

@@ -16,42 +16,15 @@ Motor 21 (MX106) ┘
 
 ---
 
-## Quick Start
-
-### Build Docker Image
+## Quick Start (Linux with USB adapter)
 
 ```bash
-# Fast build (5-10 minutes)
 docker build -t duo-joint-humble -f Dockerfile.minimal .
-
-# Or full desktop (15-20 minutes)
-docker build -t duo-joint-humble .
+./quick_test.sh        # builds, launches, prints controller + motor state
 ```
 
-### Test with Hardware
-
-```bash
-# Quick test
-./quick_test.sh
-
-# Full interactive menu
-./test_hardware.sh
-```
-
-### Commands
-
-**Option 1: Auto test**
-```bash
-./test_hardware.sh
-# Select: 5 (Full Test)
-```
-
-**Option 2: Interactive**
-```bash
-./test_hardware.sh
-# Select: 4 (Interactive Mode)
-# Enter positions: 0.5, -1.0, etc.
-```
+Torque is off by default. Set `Torque Enable` to `1` in `duo_joint/urdf/duo_joint.urdf` to move.
+Docker Desktop on macOS cannot pass through serial devices; run on Linux.
 
 ---
 
@@ -60,8 +33,7 @@ docker build -t duo-joint-humble .
 - `Dockerfile` - Full ROS 2 desktop
 - `Dockerfile.minimal` - Faster build
 - `docker-compose.yml` - Container management
-- `test_hardware.sh` - Test script with menu
-- `quick_test.sh` - Quick 30-second test
+- `quick_test.sh` - Build, launch and status check
 - `duo_joint/` - ROS 2 package
 
 ---

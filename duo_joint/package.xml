@@ -6,8 +6,8 @@
     Dual Motor Synchronized Joint - POC (ROS 2 Humble)
     URDF and control configuration for synchronized dual Dynamixel motors.
   </description>
-  <author email="napat559977@gmail.com">SKUBA R&D Team</author>
-  <maintainer email="napat559977@gmail.com">SKUBA R&D Team</maintainer>
+  <author email="napat559977@gmail.com">SKUBA Team</author>
+  <maintainer email="napat559977@gmail.com">SKUBA Team</maintainer>
   <license>BSD-3-Clause</license>
 
   <!-- Build System -->
