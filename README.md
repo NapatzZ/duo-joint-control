@@ -23,7 +23,8 @@ docker build -t duo-joint-humble -f Dockerfile.minimal .
 ./quick_test.sh        # builds, launches, prints controller + motor state
 ```
 
-Torque is off by default. Set `Torque Enable` to `1` in `duo_joint/urdf/duo_joint.urdf` to move.
+Motors are mirrored (matrices `1, -1` / `0.5, -0.5`), torque on, current limit 400, slow profile.
+Update rate is 50 Hz: at 100 Hz the USB latency timer (16 ms) causes read failures.
 Docker Desktop on macOS cannot pass through serial devices; run on Linux.
 
 ---
