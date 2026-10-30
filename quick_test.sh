@@ -4,22 +4,52 @@
 # Quick Test - Real Hardware Testing
 ################################################################################
 
-SERIAL_PORT="/dev/cu.usbserial-A98FRPHD"
 DOCKER_IMAGE="duo-joint-humble"
+
+# Auto-detect serial port
+detect_serial_port() {
+    # Try macOS first
+    if ls /dev/cu.usbserial* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/cu.usbserial* 2>/dev/null | head -1
+        return 0
+    fi
+
+    # Try Linux ttyUSB
+    if ls /dev/ttyUSB* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/ttyUSB* 2>/dev/null | head -1
+        return 0
+    fi
+
+    # Try other common names
+    if ls /dev/ttyACM* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/ttyACM* 2>/dev/null | head -1
+        return 0
+    fi
+
+    return 1
+}
+
+SERIAL_PORT=$(detect_serial_port)
 
 echo ""
 echo "╔════════════════════════════════════════════════════════╗"
 echo "║  Dual Motor Hardware Quick Test                        ║"
-echo "║  Serial Port: $SERIAL_PORT              ║"
+if [ -n "$SERIAL_PORT" ]; then
+    echo "║  Serial Port: $SERIAL_PORT"
+else
+    echo "║  Serial Port: Not found"
+fi
 echo "╚════════════════════════════════════════════════════════╝"
 echo ""
 
 # Check serial port
-if [ ! -e "$SERIAL_PORT" ]; then
-    echo "❌ Serial port $SERIAL_PORT not found!"
+if [ -z "$SERIAL_PORT" ]; then
+    echo "❌ No serial port found!"
     echo ""
-    echo "Available serial ports:"
-    ls -la /dev/cu.usbserial* 2>/dev/null || echo "  No serial ports found"
+    echo "Available ports:"
+    echo "  macOS: $(ls -1 /dev/cu.usbserial* 2>/dev/null || echo 'none')"
+    echo "  Linux: $(ls -1 /dev/ttyUSB* 2>/dev/null || echo 'none')"
+    echo "  Linux: $(ls -1 /dev/ttyACM* 2>/dev/null || echo 'none')"
     exit 1
 fi
 

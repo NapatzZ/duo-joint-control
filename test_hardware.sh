@@ -5,9 +5,33 @@
 # Tests motors on /dev/cu.usbserial-A98FRPHD
 ################################################################################
 
-SERIAL_PORT="/dev/cu.usbserial-A98FRPHD"
 DOCKER_IMAGE="duo-joint-humble"
 CONTAINER_NAME="duo-joint-hw-test"
+
+# Auto-detect serial port (macOS or Linux)
+detect_serial_port() {
+    # Try macOS first
+    if ls /dev/cu.usbserial* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/cu.usbserial* 2>/dev/null | head -1
+        return 0
+    fi
+
+    # Try Linux ttyUSB
+    if ls /dev/ttyUSB* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/ttyUSB* 2>/dev/null | head -1
+        return 0
+    fi
+
+    # Try other common names
+    if ls /dev/ttyACM* 2>/dev/null | head -1 | grep -q .; then
+        ls /dev/ttyACM* 2>/dev/null | head -1
+        return 0
+    fi
+
+    return 1
+}
+
+SERIAL_PORT=$(detect_serial_port)
 
 # Colors
 RED='\033[0;31m'
@@ -52,10 +76,12 @@ check_prerequisites() {
     fi
     print_success "Docker image found"
 
-    if [ ! -e "$SERIAL_PORT" ]; then
-        print_error "Serial port $SERIAL_PORT not found"
-        echo "  Available ports:"
-        ls /dev/cu.usbserial* 2>/dev/null || echo "  None found"
+    if [ -z "$SERIAL_PORT" ]; then
+        print_error "No serial port found!"
+        echo ""
+        echo "  macOS ports: $(ls -1 /dev/cu.usbserial* 2>/dev/null || echo 'none')"
+        echo "  Linux ports: $(ls -1 /dev/ttyUSB* 2>/dev/null || echo 'none')"
+        echo "  Linux ports: $(ls -1 /dev/ttyACM* 2>/dev/null || echo 'none')"
         exit 1
     fi
     print_success "Serial port detected: $SERIAL_PORT"
