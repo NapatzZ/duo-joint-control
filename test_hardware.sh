@@ -123,7 +123,11 @@ main() {
                 # Run Docker without -it (causes TTY issues)
                 docker run -i --rm --device=$SERIAL_PORT:/dev/ttyUSB0 $DOCKER_IMAGE bash << 'EOF'
 source /opt/ros/humble/setup.bash
-source install/setup.bash 2>/dev/null || true
+
+echo "🔨 Building ROS 2 package..."
+cd /ws && colcon build --packages-select duo_joint 2>&1 | tail -5
+
+source install/setup.bash
 
 echo ""
 echo "🚀 Launching ROS 2 Controller with REAL motors..."
@@ -142,7 +146,11 @@ EOF
                 # Run Docker without -it (causes TTY issues)
                 docker run -i --rm $DOCKER_IMAGE bash << 'EOF'
 source /opt/ros/humble/setup.bash
-source install/setup.bash 2>/dev/null || true
+
+echo "🔨 Building ROS 2 package..."
+cd /ws && colcon build --packages-select duo_joint 2>&1 | tail -5
+
+source install/setup.bash
 
 echo ""
 echo "🚀 Launching ROS 2 Controller with MOCK motors..."

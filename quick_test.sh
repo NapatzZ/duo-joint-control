@@ -66,7 +66,11 @@ docker run -i --rm \
     $DOCKER_IMAGE bash << 'DOCKER_BASH'
 
 source /opt/ros/humble/setup.bash
-source install/setup.bash 2>/dev/null || true
+
+echo "🔨 Building ROS 2 package..."
+cd /ws && colcon build --packages-select duo_joint 2>&1 | tail -5
+
+source install/setup.bash
 
 echo ""
 echo "✅ ROS 2 ready"
