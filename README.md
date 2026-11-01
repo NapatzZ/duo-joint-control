@@ -90,6 +90,43 @@ Single-run detail: [`docs/speed_sweep.png`](docs/speed_sweep.png), before/after 
 - Whether 120 corresponds to ~165 °/s assumes 1 unit = 0.229 rpm; this was not verified for the installed motor model.
 - Raising the profile means faster, harder motion: check the mechanical limits before using it.
 
+### Dual-motor synchronization (motor 22 vs motor 21)
+
+Goal: how far apart do the two motors get, are they simultaneous, and what helps. Per-motor position/velocity/current come from `/dynamic_joint_states` (~60 Hz). The motors are mirrored, so the **mismatch** is `(pos22 − rest22) − (−(pos21 − rest21))` (0 = perfectly mirrored). Same ±28.6° speed sweep as above, 3 runs per setting.
+
+![motor 22 vs motor 21 synchronization](docs/motor_sync.png)
+
+Raw data: `docs/motorsync_pv{40,120}_r{1,2,3}.csv`.
+
+| Commanded (°/s) | Max mismatch, PV 40 | Max mismatch, PV 120 |
+|---|---|---|
+| 19 | 0.29 ± 0.06° | 0.26 ± 0.00° |
+| 38 | 0.50 ± 0.26° | 0.26 ± 0.00° |
+| 57 | 0.99 ± 0.42° | 0.29 ± 0.05° |
+| 82 | 1.81 ± 1.20° | 0.53 ± 0.15° |
+| 115 | 0.94 ± 0.95° | 0.53 ± 0.09° |
+| 164 | 1.06 ± 1.30° | 1.29 ± 1.47° |
+
+(mean ± SD, n = 3.) At rest the mismatch is ≤ 0.1° (about 1 encoder tick, 0.088°).
+
+**Findings**
+- The two motors stay within about 0.3° of each other at slow speed and RMS mismatch is 0.1–0.8° across the sweep. The mismatch appears as short bursts during acceleration/direction reversal and returns to ~0 afterwards (see the time plot).
+- Simultaneity: no time offset could be resolved. The cross-correlation lag between the motors is 0 ms and the start-of-motion difference is about −3 to −9 ms (motor 21 slightly earlier), which is below the ~16 ms sample period. This only says the offset is small, not that it is exactly zero.
+- Raising `Profile Velocity`/`Profile Acceleration` from 40/20 to 120/60 reduced the mismatch at 38–115 °/s (e.g. 0.99° → 0.29° at 57 °/s, 1.81° → 0.53° at 82 °/s). At 164 °/s the results vary a lot from run to run (SD ≈ 1.3–1.5°), so no difference can be claimed there.
+- Motor 21's peak current is usually higher than motor 22's (for example about 100 vs 66 at 29 °/s with PV 40), so the two share the load unevenly. Current units were not converted or verified.
+
+**How the two motors are kept in step (verified in the code/config)**
+- Both goal positions go out in one `GroupSyncWrite` packet, so the motors receive their commands at the same time.
+- Both motors are read with one `GroupFastSyncRead`, so the two positions come from the same bus cycle.
+- Both are driven from a single `dual_joint` command through the mirror matrices (`1, -1` and `0.5, -0.5`), with identical operating mode, current limit and profile.
+
+**What to try to make it tighter (only the first item was tested)**
+1. Higher `Profile Velocity`/`Profile Acceleration`, so each motor's own profile generator is not the limiting factor. Tested above.
+2. Zero-offset calibration of the two motors so the mirrored positions start exactly equal.
+3. Use the time-based profile (Drive Mode) so both motors take the same time to reach each goal.
+4. Match the position PID gains and check the mechanical coupling for backlash, since the current imbalance suggests uneven load.
+5. A higher update rate (README: 50 Hz is the limit while the USB latency timer is 16 ms; lowering it to 1 ms should allow more), plus feedback on the mismatch itself.
+
 ---
 
 ## Files
