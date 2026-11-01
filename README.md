@@ -109,7 +109,7 @@ Script: [`scripts/write_method_test.py`](scripts/write_method_test.py). Raw data
 | Per-motor error confirmation | yes (status reply) | no (read back instead) | no | Reg Write yes; Action no |
 | Different registers per motor | yes | no | yes | yes |
 | Packets / bytes | most | fewest | few | most |
-| Risk | slow, late motors | a lost packet moves none | same | Action fires even if one Reg Write failed |
+| Risk | slow, late motors | a lost packet moves none | same | slow to start |
 
 ### Conclusion
 
