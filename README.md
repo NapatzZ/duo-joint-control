@@ -64,6 +64,32 @@ docker exec -it duo bash -c 'source /opt/ros/humble/setup.bash && source /ws/ins
   "{joint_names: [dual_joint], points: [{positions: [0.3], time_from_start: {sec: 4}}, {positions: [-0.3], time_from_start: {sec: 8}}, {positions: [0.0], time_from_start: {sec: 12}}]}"'
 ```
 
+### Speed sweep (Profile Velocity 40 vs 120)
+
+The joint was swung ±28.6° with the commanded speed raised in 7 steps (19 → 164 °/s), 3 runs per setting. `Profile Velocity`/`Profile Acceleration` were changed on the robot copy only for this test; the repo URDF still has 40 / 20.
+
+![speed sweep, mean ± SD of 3 runs](docs/speed_sweep_average.png)
+
+Single-run detail: [`docs/speed_sweep.png`](docs/speed_sweep.png), before/after overlay: [`docs/speed_sweep_compare.png`](docs/speed_sweep_compare.png). Raw data: `docs/sweep_pv40_r{1,2,3}.csv`, `docs/sweep_pv120_r{1,2,3}.csv`.
+
+| Commanded (°/s) | Max error, PV 40 | Max error, PV 120 | Reached amplitude, PV 40 | Reached amplitude, PV 120 |
+|---|---|---|---|---|
+| 19 | 2.7 ± 0.0° | 2.0 ± 0.0° | 97% | 98% |
+| 38 | 7.6 ± 0.0° | 4.3 ± 0.1° | 91% | 96% |
+| 57 | 15.9 ± 0.3° | 7.5 ± 0.2° | 79% | 93% |
+| 82 | 26.7 ± 0.6° | 13.0 ± 0.2° | 56% | 86% |
+| 115 | 32.9 ± 2.1° | 22.4 ± 0.0° | 39% | 74% |
+| 164 | 34.9 ± 0.4° | 30.6 ± 0.2° | 27% | 56% |
+
+(mean ± SD, n = 3; the runs are very repeatable.)
+
+**Findings**
+- With `Profile Velocity` 40 the measured speed saturates at ~54 °/s; any faster command only adds lag (0.12 → 0.30 s) and the joint falls short of the target amplitude (down to 27%).
+- With `Profile Velocity` 120 / `Profile Acceleration` 60 the joint follows up to ~113 °/s, lag stays at 0.10–0.18 s and the error is roughly halved between 57 and 82 °/s.
+- At 164 °/s it still falls short (56% amplitude, 30.6° error). The cause is not isolated (possibly acceleration or controller response).
+- Whether 120 corresponds to ~165 °/s assumes 1 unit = 0.229 rpm; this was not verified for the installed motor model.
+- Raising the profile means faster, harder motion: check the mechanical limits before using it.
+
 ---
 
 ## Files
